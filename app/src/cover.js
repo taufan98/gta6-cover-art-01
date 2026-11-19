@@ -10,7 +10,7 @@ export const SIZES = {
 };
 
 /** Layouts. Each is a function of (w, h) returning panel rects as fractions of
- *  the canvas, plus a title band height fraction and a frame style. */
+ *  the canvas, plus a title band height fraction. */
 export const LAYOUTS = {
   hero3: {
     label: 'Hero + 3',
@@ -74,6 +74,19 @@ export const LAYOUTS = {
     },
     band: 0.22,
   },
+  triptych: {
+    label: 'Triptych',
+    panels(w, h) {
+      const gap = 0.012;
+      const pw = (1 - gap * 2) / 3;
+      return [
+        { x: 0, y: 0, w: pw, h: 1, rot: 0 },
+        { x: pw + gap, y: 0, w: pw, h: 1, rot: 0 },
+        { x: 2 * pw + 2 * gap, y: 0, w: pw, h: 1, rot: 0 },
+      ];
+    },
+    band: 0.22,
+  },
 };
 
 /** Colour grades: a canvas filter for the photos plus overlay gradients. */
@@ -104,6 +117,15 @@ export const GRADES = {
       { from: 'rgba(255, 120, 30, 0)', to: 'rgba(200, 90, 10, 0.28)', mode: 'soft-light' },
     ],
   },
+  palm: {
+    label: 'Palm Dusk',
+    filter: 'saturate(1.42) contrast(1.1) hue-rotate(6deg)',
+    overlays: [
+      { from: 'rgba(0, 190, 165, 0)', to: 'rgba(0, 190, 165, 0.30)', mode: 'overlay' },
+      { from: 'rgba(255, 80, 180, 0)', to: 'rgba(255, 80, 180, 0.30)', mode: 'soft-light' },
+      { from: 'rgba(20, 10, 60, 0)', to: 'rgba(20, 10, 60, 0.28)', mode: 'multiply' },
+    ],
+  },
   noir: {
     label: 'Mono Noir',
     filter: 'grayscale(1) contrast(1.18) brightness(1.05)',
@@ -126,7 +148,7 @@ function makeGrainTile(size = 128) {
     data.data[i] = v;
     data.data[i + 1] = v;
     data.data[i + 2] = v;
-    data.data[i + 3] = 22;
+    data.data[i + 3] = 26;
   }
   tctx.putImageData(data, 0, 0);
   return tile;
@@ -141,14 +163,13 @@ function drawPanelPhoto(ctx, img, rect, panel, filter) {
   ctx.translate(-w / 2, -h / 2);
   if (rect.frame) {
     ctx.fillStyle = '#fdf8ef';
-    ctx.fillRect(-w * 0.03, -h * 0.03, w * 1.06, h * 1.06);
     ctx.save();
     ctx.shadowColor = 'rgba(0,0,0,0.45)';
     ctx.shadowBlur = w * 0.05;
     ctx.shadowOffsetY = w * 0.02;
-    ctx.fillStyle = '#fdf8ef';
     ctx.fillRect(-w * 0.03, -h * 0.03, w * 1.06, h * 1.06);
     ctx.restore();
+    ctx.fillRect(-w * 0.03, -h * 0.03, w * 1.06, h * 1.06);
   }
   ctx.beginPath();
   ctx.rect(0, 0, w, h);
@@ -165,7 +186,8 @@ function drawPanelPhoto(ctx, img, rect, panel, filter) {
   ctx.restore();
 }
 
-/** Draws a photo-less panel: a sunset gradient with a palm-ish silhouette bar. */
+/** Draws a photo-less panel: a sunset gradient, a pale sun disc and a
+ *  palm-ish silhouette bar, with an ADD PHOTO prompt. */
 function drawEmptyPanel(ctx, rect, grade, index) {
   const { x, y, w, h, rot } = rect;
   ctx.save();
@@ -183,6 +205,11 @@ function drawEmptyPanel(ctx, rect, grade, index) {
   g.addColorStop(1, hues[1]);
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, w, h);
+  // A pale sun disc, low in the sky, so an empty panel still reads as a sunset.
+  ctx.fillStyle = 'rgba(255, 244, 214, 0.9)';
+  ctx.beginPath();
+  ctx.arc(w * 0.68, h * 0.3, Math.min(w, h) * 0.13, 0, Math.PI * 2);
+  ctx.fill();
   ctx.fillStyle = 'rgba(20, 8, 30, 0.55)';
   ctx.beginPath();
   ctx.moveTo(0, h);
@@ -194,9 +221,9 @@ function drawEmptyPanel(ctx, rect, grade, index) {
   ctx.closePath();
   ctx.fill();
   ctx.fillStyle = 'rgba(255,255,255,0.85)';
-  ctx.font = `700 ${Math.max(12, h * 0.055)}px 'Noto Sans', 'DejaVu Sans', sans-serif`;
+  ctx.font = `700 ${Math.max(12, h * 0.05)}px 'Noto Sans', 'DejaVu Sans', sans-serif`;
   ctx.textAlign = 'center';
-  ctx.fillText('ADD PHOTO', w / 2, h * 0.5);
+  ctx.fillText('ADD PHOTO', w / 2, h * 0.52);
   ctx.restore();
 }
 
@@ -319,11 +346,12 @@ export function drawCover(canvas, state) {
   ctx.globalCompositeOperation = 'source-over';
 
   // A cream gutter line between the hero and the side column, taken from the
-  // hero panel's own right edge instead of a hard-coded split.
+  // hero panel's own right edge. (The rects are already in pixels here, so no
+  // second multiply: the earlier build scaled them again and drew off-canvas.)
   if (state.layout === 'hero3') {
     const gap = Math.max(2, w * 0.008);
     ctx.fillStyle = '#fdf8ef';
-    ctx.fillRect((rects[0].x + rects[0].w) * w, 0, gap, h);
+    ctx.fillRect(rects[0].x + rects[0].w, 0, gap, h);
   }
 
   drawTitleBlock(ctx, w, h, state, layout);
