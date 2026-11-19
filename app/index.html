@@ -3,20 +3,74 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cover Snap</title>
+<title>Vice Coast Cover Studio — GTA-style cover art maker</title>
 <link rel="stylesheet" href="./style.css">
 </head>
 <body>
 <main class="app">
   <section class="controls">
-    <h1>Cover Snap</h1>
-    <p>A photo and a caption, made into a square cover.</p>
-    <label>Photo <input id="photo" type="file" accept="image/*"></label>
-    <label>Caption <input id="caption" type="text" maxlength="40" value="Sunset Heist"></label>
-    <button id="export" type="button">Export PNG 1080 x 1080</button>
-    <p id="status" role="status"></p>
+    <h1>Vice Coast <span>Cover Studio</span></h1>
+    <p class="tag">Your photos. Your caption. A multi-panel poster, exported as a PNG to share. Works offline — photos never leave your machine.</p>
+
+    <div class="group">
+      <label class="file">Add photos
+        <input id="photos" type="file" accept="image/*" multiple>
+      </label>
+      <div id="tray" class="tray" aria-label="Loaded photos"></div>
+      <div class="row">
+        <button id="fillAll" type="button" disabled>Fill all panels</button>
+        <button id="shuffle" type="button">Shuffle photos</button>
+      </div>
+      <p class="hint">Click a photo, then click a panel to put it there. Drag a panel to crop, scroll to zoom.</p>
+    </div>
+
+    <div class="group">
+      <span class="label">Layout</span>
+      <div class="row wrap" id="layouts">
+        <button type="button" data-layout="hero3" class="on">Hero + 3</button>
+        <button type="button" data-layout="grid9">Nine grid</button>
+        <button type="button" data-layout="strip">Full bleed + strip</button>
+        <button type="button" data-layout="tilt">Tilted snapshots</button>
+      </div>
+    </div>
+
+    <div class="group">
+      <span class="label">Colour grade</span>
+      <div class="row wrap" id="grades">
+        <button type="button" data-grade="sunset" class="on">Vice Sunset</button>
+        <button type="button" data-grade="neon">Neon Nights</button>
+        <button type="button" data-grade="golden">Golden Hour</button>
+        <button type="button" data-grade="noir">Mono Noir</button>
+      </div>
+    </div>
+
+    <div class="group">
+      <label>Title <input id="title" type="text" maxlength="30" value="Vice Coast"></label>
+      <label>Subtitle <input id="subtitle" type="text" maxlength="60" value="where the sun never sets on the score"></label>
+    </div>
+
+    <div class="group">
+      <span class="label"><span id="panelLabel">Panel 1 of 4</span> — crop</span>
+      <label class="slider">Zoom <input id="zoom" type="range" min="0" max="200" value="0"></label>
+      <button id="resetPanel" type="button">Reset this panel</button>
+      <label class="check"><input id="grain" type="checkbox" checked> Film grain</label>
+      <label class="check"><input id="vignette" type="checkbox" checked> Vignette</label>
+    </div>
+
+    <div class="group">
+      <span class="label">Export size</span>
+      <div class="row wrap" id="sizes">
+        <button type="button" data-size="square" class="on">1080 x 1080</button>
+        <button type="button" data-size="portrait">1080 x 1350</button>
+        <button type="button" data-size="wide">1920 x 1080</button>
+      </div>
+      <button id="export" type="button" class="primary">Export PNG</button>
+      <p id="status" role="status"></p>
+    </div>
   </section>
-  <canvas id="cover" width="1080" height="1080" aria-label="The cover"></canvas>
+  <section class="stage">
+    <canvas id="cover" width="1080" height="1080" aria-label="The cover preview"></canvas>
+  </section>
 </main>
 <script type="module" src="./src/main.js"></script>
 </body>

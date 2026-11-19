@@ -1,12 +1,39 @@
-html, body { margin: 0; height: 100%; background: #f2f0f4; color: #1d1b22; font: 15px/1.4 system-ui, sans-serif; }
-.app { display: flex; gap: 32px; align-items: center; justify-content: center; height: 100%; padding: 24px; box-sizing: border-box; }
-.controls { display: flex; flex-direction: column; gap: 14px; width: 280px; }
-.controls h1 { margin: 0; font-size: 28px; }
-.controls p { margin: 0; color: #5c5866; }
-label { display: flex; flex-direction: column; gap: 6px; font-weight: 600; }
-input[type=text] { font: inherit; padding: 8px; border: 1px solid #c9c4d1; border-radius: 6px; }
-button { font: inherit; font-weight: 700; padding: 10px; border: 0; border-radius: 6px; background: #1d1b22; color: #fff; cursor: pointer; }
-canvas { width: min(70vh, 60vw); height: min(70vh, 60vw); box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2); }
+html, body { margin: 0; min-height: 100%; background: #12081d; color: #f5eefc; font: 15px/1.45 'Noto Sans', 'DejaVu Sans', system-ui, sans-serif; }
+.app { display: flex; gap: 28px; align-items: flex-start; justify-content: center; padding: 22px; box-sizing: border-box; }
+.controls { display: flex; flex-direction: column; gap: 16px; width: 320px; flex: none; }
+.controls h1 { margin: 0; font-size: 30px; line-height: 1.05; font-weight: 900; letter-spacing: -0.5px; text-transform: uppercase; background: linear-gradient(92deg, #ffd166, #ff5e62 55%, #c642ff); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.controls h1 span { display: block; font-size: 17px; letter-spacing: 4px; color: #7df9ff; -webkit-text-fill-color: #7df9ff; }
+.tag { margin: 0; color: #cbb8dd; font-size: 13px; }
+.group { display: flex; flex-direction: column; gap: 8px; padding: 12px; border: 1px solid #3a2350; border-radius: 10px; background: #1c0e2c; }
+.label { font-weight: 700; font-size: 13px; letter-spacing: 0.4px; color: #ffd166; }
+.row { display: flex; gap: 8px; }
+.row.wrap { flex-wrap: wrap; }
+label { display: flex; flex-direction: column; gap: 6px; font-weight: 600; font-size: 13px; }
+label.file { cursor: pointer; }
+input[type=text] { font: inherit; padding: 8px 10px; border: 1px solid #5a3a78; border-radius: 6px; background: #12081d; color: #fff; }
+input[type=file] { font: inherit; }
+button { font: inherit; font-weight: 700; padding: 8px 12px; border: 1px solid #5a3a78; border-radius: 6px; background: #2a1740; color: #f5eefc; cursor: pointer; }
+button:hover { border-color: #c642ff; }
+button.on { background: linear-gradient(92deg, #ff5e62, #c642ff); border-color: transparent; color: #fff; }
+button:disabled { opacity: 0.45; cursor: default; }
+button.primary { background: linear-gradient(92deg, #ff9a3d, #ff5e62 50%, #c642ff); border: 0; font-size: 16px; padding: 12px; }
+.hint { margin: 0; font-size: 12px; color: #a98fc2; }
+.tray { display: flex; gap: 8px; flex-wrap: wrap; min-height: 8px; }
+.thumb { padding: 0; border: 2px solid transparent; border-radius: 6px; overflow: hidden; background: none; line-height: 0; }
+.thumb canvas { width: 64px; height: 64px; object-fit: cover; }
+.thumb.on { border-color: #7df9ff; }
+.slider { flex-direction: row; align-items: center; gap: 10px; }
+.slider input { flex: 1; }
+.check { flex-direction: row; align-items: center; gap: 8px; font-weight: 400; }
+#status { margin: 0; min-height: 20px; font-size: 13px; color: #7df9ff; }
+.stage { flex: 1; display: flex; justify-content: center; position: sticky; top: 22px; }
+canvas#cover { width: min(72vh, 100%); max-width: 760px; aspect-ratio: 1 / 1; height: auto; box-shadow: 0 12px 44px rgba(0, 0, 0, 0.55); border-radius: 4px; cursor: crosshair; }
 body.shot-cover .controls { display: none; }
-body.shot-cover .app { padding: 0; }
-body.shot-cover canvas { width: 100vw; height: 100vh; box-shadow: none; }
+body.shot-cover .app { padding: 0; display: block; }
+body.shot-cover .stage { display: block; position: static; }
+body.shot-cover canvas#cover { width: 100vw; height: 100vh; max-width: none; aspect-ratio: auto; box-shadow: none; border-radius: 0; }
+@media (max-width: 900px) {
+  .app { flex-direction: column; }
+  .controls { width: 100%; }
+  .stage { position: static; width: 100%; }
+}
